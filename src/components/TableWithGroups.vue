@@ -29,36 +29,27 @@
 </template>
 
 <script>
+import _ from "lodash";
 export default {
   props: ["items", "groups"],
   computed: {
     colsCount() {
       return Object.keys(this.items).length;
     },
+    groupedItems() {
+      return _.groupBy(this.items, i => {
+        return this.groups.map(g => i[g]);
+      });
+    },
     flatItems() {
-      return [
-        { group: "Ukraine", level: 0 },
-        { group: "Donetsk Oblast", level: 1 },
-        { country: "Ukraine", region: "Donetsk Oblast", city: "Avdiivka" },
-        { country: "Ukraine", region: "Donetsk Oblast", city: "Horlivka" },
-        { country: "Ukraine", region: "Donetsk Oblast", city: "Debaltseve" },
-        { country: "Ukraine", region: "Donetsk Oblast", city: "Donetsk" },
-        { group: "Lviv Oblast", level: 1 },
-        { country: "Ukraine", region: "Lviv Oblast", city: "Drohobych" },
-        { country: "Ukraine", region: "Lviv Oblast", city: "Dubliany" },
-        { country: "Ukraine", region: "Lviv Oblast", city: "Zolochiv" },
-        { country: "Ukraine", region: "Lviv Oblast", city: "Kamianka-Buzka" },
-        { group: "USA", level: 0 },
-        { group: "Arizona", level: 1 },
-        { country: "USA", region: "Arizona", city: "Phoenix" },
-        { country: "USA", region: "Arizona", city: "Tucson" },
-        { country: "USA", region: "Arizona", city: "Mesa" },
-        { group: "Washington", level: 1 },
-        { country: "USA", region: "Washington", city: "Vancouver" },
-        { country: "USA", region: "Washington", city: "Kent" },
-        { country: "USA", region: "Washington", city: "Everett" },
-        { country: "USA", region: "Washington", city: "Rentone" }
-      ];
+      let result = [];
+      for (let key in this.groupedItems) {
+        key.split(",").forEach((k, index) => {
+          result.push({ group: k, level: index });
+        });
+        result = result.concat(this.groupedItems[key]);
+      }
+      return result;
     }
   }
 };
